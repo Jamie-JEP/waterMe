@@ -27,12 +27,18 @@ Design improvements are needed to increase user satisfaction.
 
 ## Solution
 Our ultimate goal is to create an app that can help us to manage plants that can be integrated with a mobile application to collect and analyze plant growth data, allowing users to track their plants' health and receive alerts when action is needed, such as watering. The final product will consist of the smart plant sensor and mobile application. It will make it easy for users to manage a variety of plants and provide a user-friendly service. Essentially, it will provide users with more efficient, easy, and detailed information when growing plants. This will enable users to keep their plants healthier and improve their quality of life. Since the plant pot and sensors are detachable, it can be used to grow a variety of plants regardless of the pot size.
+
 The solution will involve connecting soil moisture sensors, temperature and humidity sensors and measuring the plant's environmental data. The measured data will be stored in a database (DB) in real-time through WiFi. Since the sensors are separate from the main body, users can easily use them on any plant they want. The environmental data (soil moisture, temperature and humidity, and light intensity) measured by the sensors will be sent to the DB and the user can check this data in real-time through the mobile application.
+
 The mobile application will deliver real-time environmental data to the user, allowing them to see the plant's status anytime and anywhere. In addition, the watering time will be saved in the DB and the 10 most recent watering times will be provided to the user, which can help users manage their plants better. When the user registers a plant, the app will provide information on the plant's growth environment, making it easier for the user to manage it by providing customized cultivation instructions based on the plant's characteristics, such as reminders to water it or to place it in a sunny or well-ventilated area. In summary, the smart plant pot and mobile application will make it easy and efficient for users to grow plants and keep them healthy.
 
 ## Main Function
 -Based on the plant soil humidity measurement data, the app notifies users to water the plant when it is low in humidity for soil, and to water less if it is high in humidity for soil. 
+
 -Reflecting the watering cycle of each plant, notify when the water cycle approaches.
+
 -After plant registration, basic information (characteristics) is provided in the UI for easy viewing. 
+
 -Recommended for plant movement when surrounding temperature is too high.
+
 -Show the day you recently watered plant on user calendar.
