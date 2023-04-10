@@ -25,10 +25,6 @@ Plant management should set optimal conditions considering various environmental
 3. Design improvement
 Design improvements are needed to increase user satisfaction. 
 
-(Above images are the screens of another plant care application.) 
-Inefficient layout : Calendar accounts for a large portion of one screen. If the layout of the application is inefficient or contains a lot of unnecessary information, it can be difficult for users to quickly find the information they need.
-Accurate information not delivered to users: There may be cases that users do not know What a specific element represents on screen, such as "D-7". There is a need for a UI that properly shows accurate information to the user.
-
 ## Solution
 Our ultimate goal is to create an app that can help us to manage plants that can be integrated with a mobile application to collect and analyze plant growth data, allowing users to track their plants' health and receive alerts when action is needed, such as watering. The final product will consist of the smart plant sensor and mobile application. It will make it easy for users to manage a variety of plants and provide a user-friendly service. Essentially, it will provide users with more efficient, easy, and detailed information when growing plants. This will enable users to keep their plants healthier and improve their quality of life. Since the plant pot and sensors are detachable, it can be used to grow a variety of plants regardless of the pot size.
 The solution will involve connecting soil moisture sensors, temperature and humidity sensors and measuring the plant's environmental data. The measured data will be stored in a database (DB) in real-time through WiFi. Since the sensors are separate from the main body, users can easily use them on any plant they want. The environmental data (soil moisture, temperature and humidity, and light intensity) measured by the sensors will be sent to the DB and the user can check this data in real-time through the mobile application.
