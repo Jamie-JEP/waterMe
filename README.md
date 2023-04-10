@@ -3,4 +3,4 @@
 
 Team number: 6
 Team members: Choi Changyu, Choi Minyeong, An Hyebin,
-Kim Minkyung, Park Jungeun, Song Juhyeon
+Kim Minkyung, Park Jungeun, Song Juhyeon!
