@@ -12,6 +12,7 @@ dependencies:
   cupertino_icons: ^1.0.3
   shrine_images: ^2.0.1
   toggle_switch: ^2.0.1
+  image_picker: ^0.8.4+4
   
   
 dev_dependencies:
@@ -27,6 +28,7 @@ flutter:
   assets:
     - assets/diamond.png
     - assets/waterme_logo.png
+    - assets/pot.png
     # TODO: Add slanted menu asset (104)
     - packages/shrine_images/0-0.jpg
     - packages/shrine_images/1-0.jpg
