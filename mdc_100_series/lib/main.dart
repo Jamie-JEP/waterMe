@@ -13,8 +13,15 @@
 // limitations under the License.
 
 import 'package:flutter/material.dart';
-
+import 'package:firebase_core/firebase_core.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'app.dart';
 
-void main() => runApp(const WatermeApp());
+Future main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  runApp(WatermeApp());
+}
+
+//void main() => runApp(const WatermeApp());

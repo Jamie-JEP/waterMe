@@ -12,8 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:shrine/home.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 
 class LoginPage extends StatefulWidget {
@@ -115,6 +117,13 @@ class SignUp extends StatelessWidget {
   final _emailController = TextEditingController();
   final _formkey = GlobalKey<FormState>();
 
+
+  String userName = '';
+  String userEmail = '';
+  String userPassword = '';
+  String userPasswordConfirm = '';
+
+
   Widget build (BuildContext context) {
     return Scaffold(
       body: SafeArea(
@@ -136,9 +145,15 @@ class SignUp extends StatelessWidget {
                   }
                   if(!validateStructure(_usernameController.text)) {
                     return 'Username is invalid';
-
                   }
                   return null;
+                },
+
+                onSaved: (value){
+                  userName = value!;
+                },
+                onChanged: (value){
+                  userName = value;
                 },
               ),
               const SizedBox(height: 12.0),
@@ -155,6 +170,12 @@ class SignUp extends StatelessWidget {
                   }
                   return null;
                 },
+                onSaved: (value){
+                  userPassword = value!;
+                },
+                onChanged: (value){
+                  userPassword = value;
+                },
               ),
               const SizedBox(height: 12.0),
               TextFormField(
@@ -165,7 +186,7 @@ class SignUp extends StatelessWidget {
                 ),
                 obscureText: true,
                 validator: (value) {
-                  if (value ==null || value.isEmpty) {
+                  if (value == null || value.isEmpty) {
                     return 'Please enter confirmPassword';
                   }
                   if (_ConfirmpasswordController.text!=_passwordController.text) {
@@ -173,19 +194,32 @@ class SignUp extends StatelessWidget {
                   }
                   return null;
                 },
+                onSaved: (value){
+                  userPasswordConfirm = value!;
+                },
+                onChanged: (value){
+                  userPasswordConfirm = value;
+                },
               ),
               const SizedBox(height: 12.0),
               TextFormField(
+                keyboardType: TextInputType.emailAddress,
                 controller: _emailController,
                 decoration: const InputDecoration(
                   filled: true,
                   labelText: 'Email Address',
                 ),
                 validator: (value) {
-                  if (value ==null || value.isEmpty) {
+                  if (value == null || value.isEmpty) {
                     return 'Please enter Email Address';
                   }
                   return null;
+                },
+                onSaved: (value){
+                  userEmail = value!;
+                },
+                onChanged: (value){
+                  userEmail = value;
                 },
               ),
               const SizedBox(height: 20.0),
@@ -195,7 +229,16 @@ class SignUp extends StatelessWidget {
                   ElevatedButton(
                     child: const Text('SIGN UP'),
                     onPressed: () {
+
                       if (_formkey.currentState!.validate()){
+
+                        final user = User(
+                            name: _usernameController.text,
+                            password: _ConfirmpasswordController.text,
+                            email: _emailController.text
+                        );
+
+                        createUser(user);
                         Navigator.push(
                           context,
                           MaterialPageRoute(builder: (context) => LoginPage()),
@@ -208,8 +251,14 @@ class SignUp extends StatelessWidget {
             ],
           ),
         ),
-      ),   
+      ),
     );
+  }
+  Future createUser(User user) async{
+    final docUser = FirebaseFirestore.instance.collection('users').doc();
+    user.id = docUser.id;
+    final json = user.toJson();
+    await docUser.set(json);
   }
 }
 
@@ -221,3 +270,24 @@ bool validateStructure(String value){
 }
 
 
+
+class User {
+  String id;
+  final String name;
+  final String password;
+  final String email;
+
+  User({
+    this.id='',
+    required this.name,
+    required this.password,
+    required this.email,
+  });
+
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'name': name,
+    'password': password,
+    'email': email,
+  };
+}

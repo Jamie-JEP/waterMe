@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "2960121546",
+    "project_id": "waterme-124e7",
+    "storage_bucket": "waterme-124e7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:2960121546:android:1c489d45f228765c5d9e33",
+        "android_client_info": {
+          "package_name": "com.example.shrine"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "2960121546-e8brtjkag5qgml30qt5q7iqj009ci9oq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDpqqu3n8VIplr9NNWTUYgkjAKQz7WttV8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "2960121546-e8brtjkag5qgml30qt5q7iqj009ci9oq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
