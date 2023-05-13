@@ -1,42 +1,9 @@
-// // Future main() async {
-// //   WidgetsFlutterBinding.ensureInitialized();
-// //   await Firebase.initializeApp();
-// //   runApp(WatermeApp());
-// // }
-// //
-// // final navigatorKey = GlobalKey<NavigatorState>();
-// class WatermeApp extends StatelessWidget{
-//   const WatermeApp({Key? key}) : super(key: key);
-//   static final String title = 'Fireabse Auth';
-//
-//   @override
-//   Widget build(BuildContext context) => MaterialApp(
-//     //navigatorKey: navigatorKey,
-//     debugShowCheckedModeBanner: false,
-//     title: title,
-//     theme: ThemeData(
-//           useMaterial3: true,
-//           colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
-//         ),
-//     //initialRoute: '/login',
-//     //routes: {
-//     //    '/login': (BuildContext context) => const LoginWidget(),
-//     //    '/': (BuildContext context) => const HomePage(),
-//     //  },
-//     //home: HomePage()
-//   );
-// }
-//
-
-// void main() => runApp(const WatermeApp());
-
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:shrine/utils.dart';
 
-import 'login.dart';
+import 'signin_widget.dart';
 import 'home.dart';
 
 Future main() async {

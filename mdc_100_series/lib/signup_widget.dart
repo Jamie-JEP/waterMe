@@ -1,5 +1,5 @@
 import 'package:shrine/check.dart';
-import 'package:shrine/login.dart';
+import 'package:shrine/signin_widget.dart';
 import 'package:shrine/utils.dart';
 
 import 'main.dart';

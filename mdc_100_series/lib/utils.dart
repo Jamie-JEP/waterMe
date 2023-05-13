@@ -1,3 +1,5 @@
+//Snackbar 로 잘못된 내용 띄움
+
 import 'package:flutter/material.dart';
 
 class Utils {
