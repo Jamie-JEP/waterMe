@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'login.dart';
@@ -74,17 +75,30 @@ import 'enroll.dart';
 //       );
 //     }).toList();
 //   }
-
+import 'package:firebase_auth/firebase_auth.dart';
 class HomePage extends StatelessWidget {
-  const HomePage({Key? key}) : super(key: key);
-  
+  HomePage({Key? key}) : super(key: key);
 
-
+  final _authentication = FirebaseAuth.instance;
+  User? loggedUser;
+  void getCurrentUser(){
+    try {
+      final user = _authentication.currentUser;
+      if (user != null) {
+        loggedUser = user;
+      }
+    } catch (e){
+      print(e);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+
+    //final user = FirebaseAuth.instance.currentUser!;
     return Scaffold(
       appBar: AppBar(
+        //title: Text(user.email!),
         title: const Text('WaterMe'),
         centerTitle: true,
         actions: <Widget>[
@@ -244,7 +258,7 @@ class HomePage extends StatelessWidget {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => LoginPage()),
+                  MaterialPageRoute(builder: (context) => LoginWidget()),
                 );
               },
             ),
@@ -254,7 +268,7 @@ class HomePage extends StatelessWidget {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => LoginPage()),
+                  MaterialPageRoute(builder: (context) => LoginWidget()),
                 );
               },
             ),
@@ -262,9 +276,10 @@ class HomePage extends StatelessWidget {
               leading : Icon(Icons.logout, color: Colors.lightBlue),
               title: const Text('Log Out'),
               onTap: () {
+                FirebaseAuth.instance.signOut();
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => LoginPage()),
+                  MaterialPageRoute(builder: (context) => LoginWidget()),
                 );
               },
             ),

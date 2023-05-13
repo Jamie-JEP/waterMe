@@ -16,25 +16,25 @@ import 'package:flutter/material.dart';
 
 import 'home.dart';
 import 'login.dart';
-
-class WatermeApp extends StatelessWidget {
-  const WatermeApp({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Water Me',
-      theme: ThemeData(
-          useMaterial3: true,
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
-        ),
-      initialRoute: '/login',
-      routes: {
-        '/login': (BuildContext context) => const LoginPage(),
-        '/': (BuildContext context) => const HomePage(),
-      },
-    );
-  }
-}
+//
+// class WatermeApp extends StatelessWidget {
+//   const WatermeApp({Key? key}) : super(key: key);
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return MaterialApp(
+//       title: 'Water Me',
+//       theme: ThemeData(
+//           useMaterial3: true,
+//           colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
+//         ),
+//       initialRoute: '/login',
+//       routes: {
+//         '/login': (BuildContext context) => const LoginWidget(),
+//         '/': (BuildContext context) => const HomePage(),
+//       },
+//     );
+//   }
+// }
 
 

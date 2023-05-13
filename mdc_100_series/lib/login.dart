@@ -16,18 +16,29 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:shrine/home.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:shrine/main.dart';
+import 'package:shrine/signup_widget.dart';
+import 'package:shrine/utils.dart';
 
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({Key? key}) : super(key: key);
+class LoginWidget extends StatefulWidget {
+  const LoginWidget({Key? key}) : super(key: key);
 
   @override
-  _LoginPageState createState() => _LoginPageState();
+  _LoginWidgetState createState() => _LoginWidgetState();
 }
 
-class _LoginPageState extends State<LoginPage> {
-  final _usernameController = TextEditingController();
-  final _passwordController = TextEditingController();
+class _LoginWidgetState extends State<LoginWidget> {
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,20 +50,21 @@ class _LoginPageState extends State<LoginPage> {
             const SizedBox(height: 120.0),
             Column(
               children: <Widget>[
-                Image.asset('assets/waterme_logo.png', width: 300, fit: BoxFit.fill ),
+                Image.asset(
+                    'assets/waterme_logo.png', width: 300, fit: BoxFit.fill),
               ],
             ),
             const SizedBox(height: 120.0),
             TextField(
-              controller: _usernameController,
+              controller: emailController,
               decoration: const InputDecoration(
                 filled: true,
-                labelText: 'Username',
+                labelText: 'Email',
               ),
             ),
             const SizedBox(height: 12.0),
             TextField(
-              controller: _passwordController,
+              controller: passwordController,
               decoration: const InputDecoration(
                 filled: true,
                 labelText: 'Password',
@@ -68,18 +80,23 @@ class _LoginPageState extends State<LoginPage> {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => SignUp()),
+                      MaterialPageRoute(builder: (context) => SignUpWidget()),
                     );
-                  }, 
+                  },
                 ),
-                const SizedBox(width:50.0),
+                const SizedBox(width: 50.0),
                 ElevatedButton(
-                  child: const Text('NEXT'),
+                  child: const Text('Sign In'),
                   onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => HomePage()),
-                    );
+                    FirebaseAuth.instance
+                        .signInWithEmailAndPassword(email: emailController.text, password: passwordController.text)
+                        .then((value) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => HomePage()));
+                    }).onError((error, stackTrace){
+                      print("Error ${error.toString()}");
+                    });
                   },
                 ),
               ],
@@ -89,205 +106,4 @@ class _LoginPageState extends State<LoginPage> {
       ),
     );
   }
-}
-
-// class SignUp extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: Text("Sign up page"),
-//       ),
-//       body: Center(
-//         child: ElevatedButton(
-//           onPressed: () {
-//             Navigator.pop(context);
-//           },
-//           child: Text('Go back!'),
-//         ),
-//       ),
-//     );
-//   }
-// }
-
-class SignUp extends StatelessWidget {
-  final _usernameController = TextEditingController();
-  final _passwordController = TextEditingController();
-  final _ConfirmpasswordController = TextEditingController();
-  final _emailController = TextEditingController();
-  final _formkey = GlobalKey<FormState>();
-
-
-  String userName = '';
-  String userEmail = '';
-  String userPassword = '';
-  String userPasswordConfirm = '';
-
-
-  Widget build (BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child:Form(
-          key: _formkey,
-          child: ListView(
-            padding: const EdgeInsets.symmetric(horizontal: 30.0),
-            children: <Widget>[
-              const SizedBox(height: 50.0),
-              TextFormField(
-                controller: _usernameController,
-                decoration: const InputDecoration(
-                  filled: true,
-                  labelText: 'Username',
-                ),
-                validator: (value) {
-                  if (value ==null || value.isEmpty) {
-                    return 'Please enter name';
-                  }
-                  if(!validateStructure(_usernameController.text)) {
-                    return 'Username is invalid';
-                  }
-                  return null;
-                },
-
-                onSaved: (value){
-                  userName = value!;
-                },
-                onChanged: (value){
-                  userName = value;
-                },
-              ),
-              const SizedBox(height: 12.0),
-              TextFormField(
-                controller: _passwordController,
-                decoration: const InputDecoration(
-                  filled: true,
-                  labelText: 'Password',
-                ),
-                obscureText: true,
-                validator: (value) {
-                  if (value ==null || value.isEmpty) {
-                    return 'Please enter password';
-                  }
-                  return null;
-                },
-                onSaved: (value){
-                  userPassword = value!;
-                },
-                onChanged: (value){
-                  userPassword = value;
-                },
-              ),
-              const SizedBox(height: 12.0),
-              TextFormField(
-                controller: _ConfirmpasswordController,
-                decoration: const InputDecoration(
-                  filled: true,
-                  labelText: 'Confirm Password',
-                ),
-                obscureText: true,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter confirmPassword';
-                  }
-                  if (_ConfirmpasswordController.text!=_passwordController.text) {
-                    return "Confirm Password doesnʼt match Password";
-                  }
-                  return null;
-                },
-                onSaved: (value){
-                  userPasswordConfirm = value!;
-                },
-                onChanged: (value){
-                  userPasswordConfirm = value;
-                },
-              ),
-              const SizedBox(height: 12.0),
-              TextFormField(
-                keyboardType: TextInputType.emailAddress,
-                controller: _emailController,
-                decoration: const InputDecoration(
-                  filled: true,
-                  labelText: 'Email Address',
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter Email Address';
-                  }
-                  return null;
-                },
-                onSaved: (value){
-                  userEmail = value!;
-                },
-                onChanged: (value){
-                  userEmail = value;
-                },
-              ),
-              const SizedBox(height: 20.0),
-              OverflowBar(
-                alignment: MainAxisAlignment.end,
-                children: <Widget>[
-                  ElevatedButton(
-                    child: const Text('SIGN UP'),
-                    onPressed: () {
-
-                      if (_formkey.currentState!.validate()){
-
-                        final user = User(
-                            name: _usernameController.text,
-                            password: _ConfirmpasswordController.text,
-                            email: _emailController.text
-                        );
-
-                        createUser(user);
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => LoginPage()),
-                        );
-                      }
-                    },
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-  Future createUser(User user) async{
-    final docUser = FirebaseFirestore.instance.collection('users').doc();
-    user.id = docUser.id;
-    final json = user.toJson();
-    await docUser.set(json);
-  }
-}
-
-
-bool validateStructure(String value){
-  String  pattern = r'^(?=.*?[a-zA-Z]{3,50})(?=.*?\d{3,50}).{6,}$';
-  RegExp regExp = new RegExp(pattern);
-  return regExp.hasMatch(value);
-}
-
-
-
-class User {
-  String id;
-  final String name;
-  final String password;
-  final String email;
-
-  User({
-    this.id='',
-    required this.name,
-    required this.password,
-    required this.email,
-  });
-
-  Map<String, dynamic> toJson() => {
-    'id': id,
-    'name': name,
-    'password': password,
-    'email': email,
-  };
 }
