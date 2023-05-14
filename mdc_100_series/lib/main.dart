@@ -5,6 +5,8 @@ import 'package:shrine/utils.dart';
 
 import 'signin_widget.dart';
 import 'home.dart';
+import 'profilepage.dart';
+import 'calendarpage.dart';
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -30,6 +32,7 @@ class WatermeApp extends StatelessWidget {
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
         ),
       home: MainPage(),
+
     );
   }
 }

@@ -17,6 +17,8 @@ dependencies:
   shrine_images: ^2.0.1
   toggle_switch: ^2.0.1
   image_picker: ^0.8.4+4
+  table_calendar: ^3.0.9
+  getwidget: ^3.1.1
 
   
   

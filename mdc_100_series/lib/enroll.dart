@@ -136,6 +136,7 @@ class _EnrollState extends State<Enroll> {
             SizedBox(height: 60),
             nameTextField(),
             SizedBox(height: 20),
+            speciesField()
           ],
         )
       )
@@ -159,15 +160,7 @@ class _EnrollState extends State<Enroll> {
                   : null,
             ),
           ),
-            // CircleAvatar(
-            //   radius: 80,
-            //   backgroundImage: _imageFile == null
-            //     ? AssetImage('assets/pot.png')
-            //     : _imageFile!.path != null
-            //       ? FileImage(File(_imageFile!.path)) as ImageProvider<Object>?
-            //       : null,
-            // ),
-          
+
                 
           Positioned (
             bottom: 13,
@@ -215,7 +208,132 @@ class _EnrollState extends State<Enroll> {
       ),
     );
   }
-    
+
+
+  bool _expanded = false;
+  bool _isChecked1 = false;
+  bool _isChecked2 = false;
+  bool _isChecked3 = false;
+
+  Widget speciesField() {
+
+
+    return ExpansionPanelList(
+      animationDuration: Duration(milliseconds: 500),
+      children: [
+        ExpansionPanel(
+          headerBuilder: (context, isExpanded) {
+            return Row(
+              children: [
+                SizedBox(width: 20),
+                Row(
+                  children: [
+                    Text(
+                      "Filter",
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                        fontSize: 20
+                      ),
+                    ),
+                    SizedBox(width: 103.5),
+                    Text(
+                      "select filter",
+                      style: TextStyle(
+                          color: Colors.grey,
+                      ),
+                    ),
+                  ],
+                )
+              ],
+            );
+          },
+
+          body: Container(
+            margin: EdgeInsets.only(left: 130),
+            child: Column(
+              children : <Widget> [
+                Row(  
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children :[  
+                    Transform.scale(
+                      scale:1.5,
+                      child:Checkbox(
+                        value:_isChecked1,
+                        onChanged: (value) {
+                          setState(() {
+                            _isChecked1 = value ?? false;
+                          });
+                        },
+                      ),
+                    ),
+                    Text("No Kids Zone"),
+                  ],
+                ),
+                Row(  
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children :[  
+                    Transform.scale(
+                      scale:1.5,
+                      child:Checkbox(
+                        value:_isChecked2,
+                        onChanged: (value) {
+                          setState(() {
+                            _isChecked2 = value ?? false;
+                          });
+                        },
+                      ),
+                    ),
+                    Text("Pet-Friendly"),
+                  ],
+                ),
+                Row(  
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children :[  
+                    Transform.scale(
+                      scale:1.5,
+                      child:Checkbox(
+                        value:_isChecked3,
+                        onChanged: (value) {
+                          setState(() {
+                            _isChecked3 = value ?? false;
+                          });
+                        },
+                      ),
+                    ),
+                    Text("Free breakfast"),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          isExpanded: _expanded,
+          canTapOnHeader: true,
+        ),
+      ],
+      expandedHeaderPadding: EdgeInsets.all(0),
+      expansionCallback: (panelIndex, isExpanded) {
+        _expanded = !_expanded;
+        setState(() {
+
+        });
+      },
+    );
+  }
+
+  void FlutterDialog() {
+      String checkedItems = '';
+      if (_isChecked1) {
+        checkedItems += 'No Kids Zone\n';
+      }
+      if (_isChecked2) {
+        checkedItems += 'Pet-Friendly\n';
+      }
+      if (_isChecked3) {
+        checkedItems += 'Free breakfast\n';
+      }
+  }
+
+
   Widget bottomSheet(BuildContext context) {
     return Container(
       height: 130,
