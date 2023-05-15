@@ -27,7 +27,6 @@ class ProfilePageState extends State<ProfilePage> {
             Center(
               child:Column(
                 children: <Widget>[
-
                   const SizedBox(height: 16.0,),
                   Container(
                     child:Column(

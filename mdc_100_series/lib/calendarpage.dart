@@ -18,6 +18,7 @@ class CalendarPage extends StatefulWidget{
 CalendarFormat _calendarFormat = CalendarFormat.week;
 class CalendarPageState extends State<CalendarPage> {
   bool isChecked = false;
+  bool isWatered = false;
 
   // Set<Product> products = favoriteList;
   // final hotels = favoriteList.toList();
@@ -46,6 +47,12 @@ class CalendarPageState extends State<CalendarPage> {
                   _calendarFormat = format;
                 });
               },
+
+              calendarStyle: CalendarStyle(
+                todayDecoration: BoxDecoration(
+                  color: isWatered ? Colors.green.withOpacity(0.5) : Colors.blue.withOpacity(0.5),
+                  shape: BoxShape.circle)
+              ),
             ),
             SizedBox(height:30),
             Column(
@@ -100,6 +107,7 @@ class CalendarPageState extends State<CalendarPage> {
               onChanged: (value) {
                 setState(() {
                   isChecked = value;
+                  isWatered = value;
                 });
               },
               value: isChecked,

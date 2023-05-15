@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'homepage.dart';
 
 class Enroll extends StatefulWidget {
   @override
@@ -9,6 +10,7 @@ class Enroll extends StatefulWidget {
 }
 
 class _EnrollState extends State<Enroll> {
+  //List<Card> cards = [];
   XFile? _imageFile;
   final ImagePicker _picker = ImagePicker();
 
@@ -37,6 +39,7 @@ class _EnrollState extends State<Enroll> {
     });
   }
 
+  //firebase
   void saveDataToFirestore(String name, String waterCycle) {
     CollectionReference storedPlantCollection =
     FirebaseFirestore.instance.collection('storedPlant');
@@ -49,6 +52,18 @@ class _EnrollState extends State<Enroll> {
         .then((value) => print('Data saved to Firestore'))
         .catchError((error) => print('Failed to save data: $error'));
   }
+
+
+  // void enrollButtonPressed(String name, String email) {
+  //   // Create a new instance of the card widget and add it to the list
+  //   Card newCard = Card(
+  //     name: name,
+  //     email: email,
+  //   );
+  //   setState(() {
+  //     cards.add(newCard);
+  //   });
+  // }
 
   Widget imageProfile(BuildContext context) {
     return Center(
@@ -183,6 +198,9 @@ class _EnrollState extends State<Enroll> {
     });
   }
 
+
+
+   
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -205,6 +223,11 @@ class _EnrollState extends State<Enroll> {
               child: Text("Enroll"),
               onPressed: () {
                 saveDataToFirestore(name, waterCycle);
+                //enrollButtonPressed('John Doe', 'johndoe@example.com');
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => NewHomePage()),
+                );
               },
             ),
           ],
