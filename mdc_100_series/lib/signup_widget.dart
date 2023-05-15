@@ -7,6 +7,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:email_validator/email_validator.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 
 
 class SignUpWidget extends StatefulWidget {
@@ -92,6 +94,7 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                     }).onError((error, stackTrace) {
                       print('Error ${error.toString()}');
                     });
+                    saveEmailToFirestore(emailController.text);
                   },
                 ),
                 const SizedBox(width: 50.0),
@@ -114,3 +117,16 @@ class _SignUpWidgetState extends State<SignUpWidget> {
   }
 }
 
+void saveEmailToFirestore(String email) {
+  // Create a reference to the Firestore collection where you want to store the emails
+  CollectionReference emailCollection =
+  FirebaseFirestore.instance.collection('emails');
+
+  // Create a new document in the collection
+  emailCollection
+      .add({
+    'email': email,
+  })
+      .then((value) => print('Email saved to Firestore'))
+      .catchError((error) => print('Failed to save email: $error'));
+}

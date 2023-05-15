@@ -16,7 +16,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:shrine/home.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:shrine/main.dart';
 import 'package:shrine/signup_widget.dart';
 import 'package:shrine/utils.dart';
 
