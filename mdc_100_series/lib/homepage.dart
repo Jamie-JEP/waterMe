@@ -37,6 +37,17 @@ class NewHomePageState extends State<NewHomePage> {
           .collection('storedPlant')
           .get();
       
+      List<DocumentSnapshot> newDocuments = snapshot.docs.where((doc) {
+        // Filter out the documents that already exist in plantDocuments list
+        return !plantDocuments.any((existingDoc) => existingDoc.id == doc.id);
+      }).toList();
+
+      if (newDocuments.isNotEmpty) {
+        setState(() {
+          plantDocuments.addAll(newDocuments);
+        });
+      }
+
       setState(() {
         plantDocuments = snapshot.docs;
       });
@@ -98,6 +109,7 @@ class NewHomePageState extends State<NewHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(title: Text("")),
       body: Column(
         children: [
           Expanded(

@@ -61,16 +61,7 @@ class _EnrollState extends State<Enroll> {
   }
 
 
-  // void enrollButtonPressed(String name, String email) {
-  //   // Create a new instance of the card widget and add it to the list
-  //   Card newCard = Card(
-  //     name: name,
-  //     email: email,
-  //   );
-  //   setState(() {
-  //     cards.add(newCard);
-  //   });
-  // }
+
 
   Widget imageProfile(BuildContext context) {
     return Center(
