@@ -22,6 +22,7 @@ class NewHomePageState extends State<NewHomePage> {
 
 
   List<Card> cards = [];
+  List<DocumentSnapshot> plantDocuments = [];
   // Set<Product> products = favoriteList;
   // final hotels = favoriteList.toList();
 
@@ -35,6 +36,10 @@ class NewHomePageState extends State<NewHomePage> {
       QuerySnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore.instance
           .collection('storedPlant')
           .get();
+      
+      setState(() {
+        plantDocuments = snapshot.docs;
+      });
 
       List<String> documentIds = snapshot.docs.map((doc) => doc.id).toList();
       print('All document IDs: $documentIds');
@@ -93,300 +98,166 @@ class NewHomePageState extends State<NewHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Column(
-          children: [
+      body: Column(
+        children: [
+          Expanded(
+            child: SingleChildScrollView(
+              child: ListView.builder(
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
+                itemCount: plantDocuments.length,
+                itemBuilder: (context, index) {
+                  DocumentSnapshot plantDocument = plantDocuments[index];
+                  String plantName = plantDocument.get('name') as String? ?? '';
+                  String waterCycle = plantDocument.get('waterCycle') as String? ?? '';
 
-            Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(left: 16.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
+                
+                  return Column(
                     children: [
-                      Container(
-                        child: Center(
-                          child: Text(
-                            //식물이름
-                            plantName,
-                            //'Puri',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                              color: Colors.white,
-                            ),
-                            //textAlign: TextAlign.center,
-                          ),
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.green,
-                          borderRadius: BorderRadius.all(Radius.circular(12.0)),
-                        ),
-                        width: 100.0,
-                        height: 35.0,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: 15, right: 15),
-              child: Card(
-                elevation: 5,
-                clipBehavior: Clip.antiAliasWithSaveLayer,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                ),
-                child: Container(
-                  width: double.infinity,
-                  height: 100,
-                  decoration: BoxDecoration(
-                    color: Colors.white10,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Row(
-                    children: [
-                      //이미지 추가
                       Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: ClipOval(
-                          child: Image.asset('assets/pot.png',
-                            width: 80,
-                            height: 80,
+                        padding: const EdgeInsets.only(left: 15, right: 15, bottom: 1),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Container(
+                              child: Center(
+                                child: Text(
+                                  //식물이름
+                                  plantName,
+                                  //'Puri',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                    color: Colors.white,
+                                  ),
+                                  //textAlign: TextAlign.center,
+                                ),
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.green,
+                                borderRadius: BorderRadius.all(Radius.circular(12.0)),
+                              ),
+                              width: 100.0,
+                              height: 35.0,
+                            ),
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 15, right: 15, bottom: 15),
+                        child: Card(
+                          elevation: 5,
+                          clipBehavior: Clip.antiAliasWithSaveLayer,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                          child: Container(
+                            width: double.infinity,
+                            height: 100,
+                            decoration: BoxDecoration(
+                              color: Colors.white10,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Row(
+                              children: [
+                                //이미지 추가
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: ClipOval(
+                                    child: Image.asset('assets/pot.png',
+                                      width: 80,
+                                      height: 80,
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(width: 10),
+                                // 텍스트 추가
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    SizedBox(height: 10),
+                                    Row(
+                                      children: [
+                                        Text(
+                                          'Temperature: ',
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                          ),
+                                        ),
+                                        Text(
+                                          //온도값
+                                          //'25°C',
+                                          temperature,
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(height: 5),
+                                    Row(
+                                      children: [
+                                        Text(
+                                          'Water supply cycle : ',
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                          ),
+                                        ),
+                                        Text(
+                                          //주기
+                                          waterCycle, //'14 days',
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(height: 5),
+                                    Row(
+                                      children: [
+                                        Text(
+                                          'Soil humidity : ',
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                          ),
+                                        ),
+                                        Text(
+                                          //습도값
+                                          //'70%',
+                                          soilHumidity,
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),
-                      SizedBox(width: 10),
-                      // 텍스트 추가
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SizedBox(height: 10),
-                          Row(
-                            children: [
-                              Text(
-                                'Temperature: ',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                ),
-                              ),
-                              Text(
-                                //온도값
-                                //'25°C',
-                                temperature,
-                                style: TextStyle(
-                                  fontSize: 16,
-                                ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 5),
-                          Row(
-                            children: [
-                              Text(
-                                'Water supply cycle : ',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                ),
-                              ),
-                              Text(
-                                //주기
-                                waterCycle, //'14 days',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 5),
-                          Row(
-                            children: [
-                              Text(
-                                'Soil humidity : ',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                ),
-                              ),
-                              Text(
-                                //습도값
-                                //'70%',
-                                soilHumidity,
-                                style: TextStyle(
-                                  fontSize: 16,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
                     ],
-                  ),
-                ),
+                  );
+                },
               ),
             ),
-            // ListView.builder(
-            //   shrinkWrap: true,
-            //   itemCount: cards.length,
-            //   itemBuilder: (context, index) {
-            //     return cards[index];
-            //   },
-            // ),
-            //   Column(
-            //     children: [
-            //       Padding(
-            //         padding: const EdgeInsets.only(left: 16.0),
-            //         child: Row(
-            //           mainAxisAlignment: MainAxisAlignment.start,
-            //           children: [
-            //             Container(
-            //               child: Center(
-            //                 child: Text(
-            //                   //식물이름
-            //                   'Puri',
-            //                   style: TextStyle(
-            //                       fontWeight: FontWeight.bold,
-            //                       fontSize: 16,
-            //                       color: Colors.white,
-            //                   ),
-            //                   //textAlign: TextAlign.center,
-            //                 ),
-            //               ),
-            //               decoration: BoxDecoration(
-            //                   color: Colors.green,
-            //                   borderRadius: BorderRadius.all(Radius.circular(12.0)),
-            //               ),
-            //               width: 100.0,
-            //               height: 35.0,
-            //             ),
-            //           ],
-            //         ),
-            //       ),
-            //     ],
-            //   ),
-            //   Padding(
-            //     padding: const EdgeInsets.only(left: 15, right: 15),
-            //     child: Card(
-            //       elevation: 5,
-            //       clipBehavior: Clip.antiAliasWithSaveLayer,
-            //       shape: RoundedRectangleBorder(
-            //         borderRadius: BorderRadius.circular(10.0),
-            //       ),
-            //       child: Container(
-            //         width: double.infinity,
-            //         height: 100,
-            //         decoration: BoxDecoration(
-            //           color: Colors.white10,
-            //           borderRadius: BorderRadius.circular(10),
-            //         ),
-            //         child: Row(
-            //           children: [
-            //             //이미지 추가
-            //             Padding(
-            //               padding: const EdgeInsets.all(8.0),
-            //               child: ClipOval(
-            //                 child: Image.asset('assets/pot.png',
-            //                   width: 80,
-            //                   height: 80,
-            //                 ),
-            //               ),
-            //             ),
-            //             SizedBox(width: 10),
-            //             // 텍스트 추가
-            //             Column(
-            //               crossAxisAlignment: CrossAxisAlignment.start,
-            //               children: [
-            //                 SizedBox(height: 10),
-            //                 Row(
-            //                   children: [
-            //                     Text(
-            //                       'Temperature: ',
-            //                       style: TextStyle(
-            //                         fontSize: 16,
-            //                       ),
-            //                     ),
-            //                     Text(
-            //                       //온도값
-            //                       '25°C',
-            //                       style: TextStyle(
-            //                         fontSize: 16,
-            //                       ),
-            //                     ),
-            //                   ],
-            //                 ),
-            //                 SizedBox(height: 5),
-            //                 Row(
-            //                   children: [
-            //                     Text(
-            //                       'Water supply cycle : ',
-            //                       style: TextStyle(
-            //                         fontSize: 16,
-            //                       ),
-            //                     ),
-            //                     Text(
-            //                       //주기
-            //                       '14 days',
-            //                       style: TextStyle(
-            //                         fontSize: 16,
-            //                       ),
-            //                     ),
-            //                   ],
-            //                 ),
-            //                 SizedBox(height: 5),
-            //                 Row(
-            //                   children: [
-            //                     Text(
-            //                       'Soil humidity : ',
-            //                       style: TextStyle(
-            //                         fontSize: 16,
-            //                       ),
-            //                     ),
-            //                     Text(
-            //                       //습도값
-            //                       '70%',
-            //                       style: TextStyle(
-            //                         fontSize: 16,
-            //                       ),
-            //                     ),
-            //                   ],
-            //                 ),
-            //               ],
-            //             ),
-            //           ],
-            //         ),
-            //       ),
-            //     ),
-            //   ),
-
-            SizedBox(height: 340),
-            ElevatedButton(
-              child: const Text('새로운 식물 등록하기'),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => Enroll()),
-                );
-              },
-            ),
-          ],
-        ),
-      ),
+          ),
+          SizedBox(height: 40),
+          ElevatedButton(
+            child: const Text('새로운 식물 등록하기'),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => Enroll()),
+              );
+            },
+          ),
+        ],
+              
+      ),      
     );
   }
 }
 
-
-// class Card extends StatelessWidget {
-//   final String name;
-//   final String email;
-//
-//   Card({required this.name, required this.email});
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Container(
-//       // Your card UI design here
-//       child: Text('$name - $email'),
-//     );
-//   }
-// }
