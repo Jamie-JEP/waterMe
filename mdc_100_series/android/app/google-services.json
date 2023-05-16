@@ -1,33 +1,34 @@
 {
   "project_info": {
-    "project_number": "2960121546",
-    "project_id": "waterme-124e7",
-    "storage_bucket": "waterme-124e7.appspot.com"
+    "project_number": "745171668230",
+    "firebase_url": "https://realwaterme-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "realwaterme",
+    "storage_bucket": "realwaterme.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:2960121546:android:1c489d45f228765c5d9e33",
+        "mobilesdk_app_id": "1:745171668230:android:8f3566ee255bf8c03d6287",
         "android_client_info": {
           "package_name": "com.example.shrine"
         }
       },
       "oauth_client": [
         {
-          "client_id": "2960121546-e8brtjkag5qgml30qt5q7iqj009ci9oq.apps.googleusercontent.com",
+          "client_id": "745171668230-vh2jqbp3k9qp165ucrcl5qvl9r6jaki7.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDpqqu3n8VIplr9NNWTUYgkjAKQz7WttV8"
+          "current_key": "AIzaSyCHNq2oEpBC2OzJK4e6UqAERMCblWg0YMs"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "2960121546-e8brtjkag5qgml30qt5q7iqj009ci9oq.apps.googleusercontent.com",
+              "client_id": "745171668230-vh2jqbp3k9qp165ucrcl5qvl9r6jaki7.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

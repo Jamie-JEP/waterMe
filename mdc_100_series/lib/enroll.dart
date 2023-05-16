@@ -49,7 +49,14 @@ class _EnrollState extends State<Enroll> {
       'name': name,
       'waterCycle': waterCycle,
     })
-        .then((value) => print('Data saved to Firestore'))
+        .then((DocumentReference document) {
+      print('Data saved to Firestore with ID: ${document.id}');
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => NewHomePage(documentId: document.id)),
+      );
+    })
+        // .then((value) => print('Data saved to Firestore'))
         .catchError((error) => print('Failed to save data: $error'));
   }
 
@@ -226,7 +233,7 @@ class _EnrollState extends State<Enroll> {
                 //enrollButtonPressed('John Doe', 'johndoe@example.com');
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => NewHomePage()),
+                  MaterialPageRoute(builder: (context) => NewHomePage(documentId: '',)),
                 );
               },
             ),
