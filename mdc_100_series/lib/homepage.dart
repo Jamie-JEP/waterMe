@@ -5,6 +5,8 @@ import 'package:cloud_firestore/cloud_firestore.dart'; // Import the Firestore p
 import 'package:firebase_database/firebase_database.dart'; // Import the FirebaseDatabase package
 
 import 'enroll.dart';
+import 'home.dart';
+
 
 class NewHomePage extends StatefulWidget{
   final String documentId;
@@ -109,7 +111,7 @@ class NewHomePageState extends State<NewHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("")),
+      //appBar: AppBar(title: Text("water")),
       body: Column(
         children: [
           Expanded(
@@ -256,7 +258,7 @@ class NewHomePageState extends State<NewHomePage> {
               ),
             ),
           ),
-          SizedBox(height: 40),
+          SizedBox(height: 15),
           ElevatedButton(
             child: const Text('새로운 식물 등록하기'),
             onPressed: () {
@@ -266,6 +268,7 @@ class NewHomePageState extends State<NewHomePage> {
               );
             },
           ),
+          SizedBox(height: 15),
         ],
               
       ),      
@@ -273,3 +276,39 @@ class NewHomePageState extends State<NewHomePage> {
   }
 }
 
+// class NewHomePage extends StatefulWidget {
+//   final String documentId;
+
+//   const NewHomePage({Key? key, required this.documentId}) : super(key: key);
+
+//   @override
+//   State<NewHomePage> createState() => _NewHomePageState();
+// }
+
+// class _NewHomePageState extends State<NewHomePage> {
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: Text('New Home Page'),
+//       ),
+//       body: Center(
+//         child: Column(
+//           mainAxisAlignment: MainAxisAlignment.center,
+//           children: [
+//             Text('Document ID: ${widget.documentId}'),
+//             ElevatedButton(
+//               child: Text('Go to add Page'),
+//               onPressed: () {
+//                 Navigator.push(
+//                   context,
+//                   MaterialPageRoute(builder: (context) => Enroll()),
+//                 );
+//               },
+//             ),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }

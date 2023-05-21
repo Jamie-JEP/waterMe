@@ -106,6 +106,7 @@ class _HomePageState extends State<HomePage> {
   final List<Widget> _widgetOptions = <Widget>[
     CalendarPage(),
     NewHomePage(documentId: '',),
+    //Container(),
     ProfilePage(),
   ];
 
