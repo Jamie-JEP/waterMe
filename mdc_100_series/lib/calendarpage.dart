@@ -6,7 +6,7 @@ import 'signin_widget.dart';
 import 'model/product.dart';
 import 'model/products_repository.dart';
 import 'alarm.dart';
-import 'enroll.dart';
+import 'homepage.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:getwidget/getwidget.dart';
 
@@ -25,7 +25,8 @@ class PlantData {
 }
 
 class CalendarPage extends StatefulWidget{
-  const CalendarPage({Key? key}) : super(key: key);
+  final int soilHumidity;
+  const CalendarPage({Key? key, required this.soilHumidity}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => CalendarPageState();
@@ -71,7 +72,7 @@ class CalendarPageState extends State<CalendarPage> {
       // 필터링 작업 수행
       List<PlantData> newPlantDataList = snapshot.docs.where((doc) {
         int waterCycle = int.tryParse(doc.get('waterCycle') as String? ?? '') ?? 0;
-        return waterCycle < 15;
+        return widget.soilHumidity < 15;
       }).map((doc) {
         return PlantData(
           id: doc.id,

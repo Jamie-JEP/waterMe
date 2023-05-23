@@ -13,7 +13,6 @@
 // limitations under the License.
 
 import 'package:flutter/material.dart';
-
 import 'home.dart';
 import 'signin_widget.dart';
 import 'calendarpage.dart';
@@ -34,7 +33,7 @@ class WatermeApp extends StatelessWidget {
       routes: {
         '/login': (BuildContext context) => const LoginWidget(),
         '/': (BuildContext context) => HomePage(),
-        '/calender':(BuildContext context) => CalendarPage(),
+        '/calender':(BuildContext context) => CalendarPage(soilHumidity: 0,),
         '/profile':(BuildContext context)=> ProfilePage()
       },
     );

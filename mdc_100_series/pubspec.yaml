@@ -1,6 +1,8 @@
 name: shrine
 description: Discover how Material Components for Flutter make it easy to differentiate your product and express your brand through design.
 
+version: 1.0.0
+
 environment:
   sdk: ">=2.12.0 <3.0.0"
 
@@ -13,6 +15,8 @@ dependencies:
   firebase_auth: ^4.6.0
   email_validator: ^2.1.17
   firebase_database: ^10.2.0
+  firebase_storage: ^11.2.1
+
 
   cupertino_icons: ^1.0.3
   shrine_images: ^2.0.1

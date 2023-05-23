@@ -33,12 +33,75 @@ class NewHomePageState extends State<NewHomePage> {
     fetchPlantData(); // Fetch the plant data when the widget initializes
   }
 
+  // void fetchPlantData() async {
+  //   try {
+  //     QuerySnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore.instance
+  //         .collection('storedPlant')
+  //         .get();
+  //
+  //     List<DocumentSnapshot> newDocuments = snapshot.docs.where((doc) {
+  //       // Filter out the documents that already exist in plantDocuments list
+  //       return !plantDocuments.any((existingDoc) => existingDoc.id == doc.id);
+  //     }).toList();
+  //
+  //     if (newDocuments.isNotEmpty) {
+  //       setState(() {
+  //         plantDocuments.addAll(newDocuments);
+  //       });
+  //     }
+  //
+  //     setState(() {
+  //       plantDocuments = snapshot.docs;
+  //     });
+  //
+  //     List<String> documentIds = snapshot.docs.map((doc) => doc.id).toList();
+  //     print('All document IDs: $documentIds');
+  //
+  //     for (DocumentSnapshot plantDocument in plantDocuments) {
+  //       String documentId = plantDocument.id;
+  //       String plantName = plantDocument.get('name') as String? ?? '';
+  //       String waterCycle = plantDocument.get('waterCycle') as String? ?? '';
+  //       String photoDownloadURL =
+  //           'https://firebasestorage.googleapis.com/v0/b/realwaterme.appspot.com/o/profile_photos%2F${plantDocument.id}.jpg?alt=media';
+  //
+  //       // Access the temperature and soil humidity data based on documentId
+  //       DatabaseReference reference =
+  //       FirebaseDatabase.instance.reference().child(documentId);
+  //
+  //       // Listen for a single value event
+  //       reference.once().then((DatabaseEvent event) {
+  //         DataSnapshot snapshot = event.snapshot;
+  //         dynamic value = snapshot.value;
+  //         if (value != null) {
+  //           // Get the 'Temperature' and 'Soil Moisture' values from Realtime Database
+  //           String temperature = value['Temperature']?.toString() ?? '';
+  //           String soilHumidity = value['Soil Moisture']?.toString() ?? '';
+  //
+  //           // Update the data in the Firestore collection
+  //           FirebaseFirestore.instance.collection('storedPlant').doc(documentId).update({
+  //             'temperature': temperature,
+  //             'soilHumidity': soilHumidity,
+  //           }).then((_) {
+  //             print('Plant data updated successfully for document $documentId');
+  //           }).catchError((error) {
+  //             print('Error updating plant data for document $documentId: $error');
+  //           });
+  //         }
+  //       }).catchError((error) {
+  //         print('Error fetching plant data for document $documentId: $error');
+  //       });
+  //     }
+  //   } catch (e) {
+  //     print('Error fetching plant data: $e');
+  //   }
+  // }
+
   void fetchPlantData() async {
     try {
       QuerySnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore.instance
           .collection('storedPlant')
           .get();
-      
+
       List<DocumentSnapshot> newDocuments = snapshot.docs.where((doc) {
         // Filter out the documents that already exist in plantDocuments list
         return !plantDocuments.any((existingDoc) => existingDoc.id == doc.id);
@@ -64,17 +127,13 @@ class NewHomePageState extends State<NewHomePage> {
 
       // Access the 'ttest' node in Realtime Database
       DatabaseReference reference =
-      FirebaseDatabase.instance.reference().child('ttest');
+      FirebaseDatabase.instance.reference().child('test1');
 
       if (snapshot.docs.isNotEmpty) {
         var firstDocument = snapshot.docs.first;
         plantName = firstDocument.get('name') as String? ?? '';
         waterCycle = firstDocument.get('waterCycle') as String? ?? '';
       }
-
-      //
-      // plantName = snapshot.data()?['name'] ?? '';
-      // waterCycle = snapshot.data()?['waterCycle'] ?? '';
 
       // Listen for a single value event
       reference.once().then((DatabaseEvent event) {
@@ -96,17 +155,6 @@ class NewHomePageState extends State<NewHomePage> {
   }
 
 
-  // void enrollButtonPressed(String name, String email) {
-  //   // Create a new instance of the card widget and add it to the list
-  //   Card newCard = Card(
-  //     name: name,
-  //     email: email,
-  //   );
-  //   setState(() {
-  //     cards.add(newCard);
-  //   });
-  // }
-
 
   @override
   Widget build(BuildContext context) {
@@ -124,8 +172,11 @@ class NewHomePageState extends State<NewHomePage> {
                   DocumentSnapshot plantDocument = plantDocuments[index];
                   String plantName = plantDocument.get('name') as String? ?? '';
                   String waterCycle = plantDocument.get('waterCycle') as String? ?? '';
+                  String photoDownloadURL =
+                      'https://firebasestorage.googleapis.com/v0/b/realwaterme.appspot.com/o/profile_photos%2F${plantDocument.id}.jpg?alt=media';
 
-                
+
+
                   return Column(
                     children: [
                       Padding(
@@ -178,9 +229,18 @@ class NewHomePageState extends State<NewHomePage> {
                                 Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: ClipOval(
-                                    child: Image.asset('assets/pot.png',
+                                    child: Image.network(
+                                      photoDownloadURL,
                                       width: 80,
                                       height: 80,
+                                      errorBuilder: (context, error, stackTrace) {
+                                        // Handle the case when the photo fails to load
+                                        return Image.asset(
+                                          'assets/pot.png',
+                                          width: 80,
+                                          height: 80,
+                                        );
+                                      },
                                     ),
                                   ),
                                 ),
@@ -236,13 +296,12 @@ class NewHomePageState extends State<NewHomePage> {
                                           ),
                                         ),
                                         Text(
-                                          //습도값
-                                          //'70%',
-                                          soilHumidity,
+                                          (double.tryParse(soilHumidity)?.toStringAsFixed(2) ?? 'Invalid humidity') + '%',
                                           style: TextStyle(
                                             fontSize: 16,
                                           ),
                                         ),
+
                                       ],
                                     ),
                                   ],
@@ -275,40 +334,3 @@ class NewHomePageState extends State<NewHomePage> {
     );
   }
 }
-
-// class NewHomePage extends StatefulWidget {
-//   final String documentId;
-
-//   const NewHomePage({Key? key, required this.documentId}) : super(key: key);
-
-//   @override
-//   State<NewHomePage> createState() => _NewHomePageState();
-// }
-
-// class _NewHomePageState extends State<NewHomePage> {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: Text('New Home Page'),
-//       ),
-//       body: Center(
-//         child: Column(
-//           mainAxisAlignment: MainAxisAlignment.center,
-//           children: [
-//             Text('Document ID: ${widget.documentId}'),
-//             ElevatedButton(
-//               child: Text('Go to add Page'),
-//               onPressed: () {
-//                 Navigator.push(
-//                   context,
-//                   MaterialPageRoute(builder: (context) => Enroll()),
-//                 );
-//               },
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }

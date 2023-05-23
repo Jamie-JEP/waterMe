@@ -1,13 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'signin_widget.dart';
-import 'model/product.dart';
-import 'model/products_repository.dart';
-import 'alarm.dart';
-import 'enroll.dart';
 
-class ProfilePage extends StatefulWidget{
+class ProfilePage extends StatefulWidget {
   const ProfilePage({Key? key}) : super(key: key);
 
   @override
@@ -15,38 +10,47 @@ class ProfilePage extends StatefulWidget{
 }
 
 class ProfilePageState extends State<ProfilePage> {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  late User? _user;
+
+  @override
+  void initState() {
+    super.initState();
+    _user = _auth.currentUser;
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(25),
-
-        child:Column(
-          children:[
+        child: Column(
+          children: [
             Center(
-              child:Column(
+              child: Column(
                 children: <Widget>[
-                  const SizedBox(height: 16.0,),
+                  const SizedBox(height: 200.0),
                   Container(
-                    child:Column(
-                      children: const [
-                        //user 이름(로그인?)
-                        Text("An Hyebin"),
+                    child: Column(
+                      children: [
+                        // Display logged-in user email
+                        Text(_user?.email ?? 'Unknown User',
+                          style: TextStyle(fontSize: 28),),
                       ],
-                    )
+                    ),
                   ),
-                  SizedBox(height: 400,),
+                  SizedBox(height: 200),
                   ElevatedButton(
                     child: const Text('Log-out'),
-                    onPressed: () {
+                    onPressed: () async {
+                      await _auth.signOut();
                       Navigator.push(
                         context,
                         MaterialPageRoute(builder: (context) => LoginWidget()),
                       );
                     },
                   ),
-                ]
+                ],
               ),
             ),
           ],

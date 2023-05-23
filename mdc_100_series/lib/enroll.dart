@@ -2,8 +2,10 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'homepage.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'home.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'dart:io';
 
 class Enroll extends StatefulWidget {
   @override
@@ -12,6 +14,9 @@ class Enroll extends StatefulWidget {
 
 class _EnrollState extends State<Enroll> {
   //List<Card> cards = [];
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  late User? _user;
+  File? selectedFile;
   XFile? _imageFile;
   final ImagePicker _picker = ImagePicker();
 
@@ -27,6 +32,49 @@ class _EnrollState extends State<Enroll> {
     nameController.addListener(updateName);
     waterCycleController.addListener(updateWaterCycle);
   }
+
+  Future<void> uploadPhotoToFirebase(File file) async {
+    if (file == null) return; // Return if no file is selected
+
+    try {
+      // Create a reference to the file in Firebase Storage
+      final FirebaseStorage storage = FirebaseStorage.instance;
+      final Reference storageRef = storage.ref().child('profile_photos').child('${_user?.uid}.jpg');
+
+      // Upload the file to Firebase Storage
+      await storageRef.putFile(file);
+
+      // Get the download URL of the uploaded file
+      final String downloadURL = await storageRef.getDownloadURL();
+
+      // Do something with the downloadURL, such as storing it in the user's profile
+
+      print('Photo uploaded successfully');
+    } catch (e) {
+      print('Error uploading photo: $e');
+      // Handle the error
+    }
+  }
+
+  Future<void> captureImage() async {
+    // Code to capture a photo using the camera
+    // Set the selectedFile to the captured image file
+    // ...
+
+    // Call the method to upload the photo to Firebase Storage
+    await uploadPhotoToFirebase(selectedFile!);
+  }
+
+  Future<void> pickImageFromAlbum() async {
+    // Code to select an image from the album
+    // Set the selectedFile to the selected image file
+    // ...
+
+    // Call the method to upload the photo to Firebase Storage
+    await uploadPhotoToFirebase(selectedFile!);
+  }
+
+
 
   void updateName() {
     setState(() {
@@ -58,12 +106,12 @@ class _EnrollState extends State<Enroll> {
         context,
         //MaterialPageRoute(builder: (context) => NewHomePage(documentId: document.id)),
         MaterialPageRoute(
-              builder: (context) => HomePage(),
-              settings: RouteSettings(arguments: newHomePageIndex),
-            ),
+          builder: (context) => HomePage(),
+          settings: RouteSettings(arguments: newHomePageIndex),
+        ),
       );
     })
-        // .then((value) => print('Data saved to Firestore'))
+    // .then((value) => print('Data saved to Firestore'))
         .catchError((error) => print('Failed to save data: $error'));
   }
 
@@ -80,8 +128,8 @@ class _EnrollState extends State<Enroll> {
             child: CircleAvatar(
               radius: 80,
               backgroundImage: _imageFile == null
-                ? AssetImage('assets/pot.png')
-                : _imageFile!.path != null
+                  ? AssetImage('assets/pot.png')
+                  : _imageFile!.path != null
                   ? FileImage(File(_imageFile!.path)) as ImageProvider<Object>?
                   : null,
             ),
@@ -163,36 +211,36 @@ class _EnrollState extends State<Enroll> {
       height: 130,
       width: MediaQuery
           .of(context).size.width,
-    margin: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-    child: Column(
-    children: <Widget>[
-    Text(
-    'Choose Profile photo',
-    style: TextStyle
-      (fontSize: 29),
-    ),
-      SizedBox(height: 20),
-      Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      margin: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+      child: Column(
         children: <Widget>[
-          ElevatedButton.icon(
-            icon: Icon(Icons.camera, size: 40),
-            onPressed: () {
-              takePhoto(ImageSource.camera);
-            },
-            label: Text('Camera', style: TextStyle(fontSize: 20)),
+          Text(
+            'Choose Profile photo',
+            style: TextStyle
+              (fontSize: 29),
           ),
-          ElevatedButton.icon(
-            icon: Icon(Icons.photo_library, size: 40),
-            onPressed: () {
-              takePhoto(ImageSource.gallery);
-            },
-            label: Text('Gallery', style: TextStyle(fontSize: 20)),
+          SizedBox(height: 20),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              ElevatedButton.icon(
+                icon: Icon(Icons.camera, size: 40),
+                onPressed: () {
+                  takePhoto(ImageSource.camera);
+                },
+                label: Text('Camera', style: TextStyle(fontSize: 20)),
+              ),
+              ElevatedButton.icon(
+                icon: Icon(Icons.photo_library, size: 40),
+                onPressed: () {
+                  takePhoto(ImageSource.gallery);
+                },
+                label: Text('Gallery', style: TextStyle(fontSize: 20)),
+              ),
+            ],
           ),
         ],
       ),
-    ],
-    ),
     );
   }
 
@@ -205,7 +253,7 @@ class _EnrollState extends State<Enroll> {
 
 
 
-   
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -226,8 +274,9 @@ class _EnrollState extends State<Enroll> {
             SizedBox(height: 80),
             ElevatedButton(
               child: Text("Enroll"),
-              onPressed: () {
+              onPressed: () async{
                 saveDataToFirestore(name, waterCycle);
+                await uploadPhotoToFirebase(selectedFile!);
                 // Navigator.pop(context);
 
                 Navigator.push(
@@ -243,9 +292,3 @@ class _EnrollState extends State<Enroll> {
     );
   }
 }
-
-
-
-
-
-
