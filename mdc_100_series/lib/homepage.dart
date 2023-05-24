@@ -1,9 +1,8 @@
 import 'dart:async';
-
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart'; // Import the Firestore package
-import 'package:firebase_database/firebase_database.dart'; // Import the FirebaseDatabase package
-
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'enroll.dart';
 import 'home.dart';
 
@@ -16,24 +15,93 @@ class NewHomePage extends StatefulWidget{
   State<StatefulWidget> createState() => NewHomePageState();
 }
 
+class PlantData {
+  final String code;
+  final String plantName;
+  final String waterCycle;
+  final int humid;
+  final int temp;
+  final String photoUrl;
+
+  PlantData({
+    required this.code,
+    required this.plantName,
+    required this.waterCycle,
+    required this.humid,
+    required this.temp,
+    required this.photoUrl,
+  });
+}
+
+
 class NewHomePageState extends State<NewHomePage> {
-  late String plantName = ''; // Initialize with an empty string
-  late String waterCycle = ''; // Initialize with an empty string
+  late String plantName = '';
+  late String waterCycle = '';
   late String temperature ='';
   late String soilHumidity = '';
-
+  late String code = '';
 
   List<Card> cards = [];
   List<DocumentSnapshot> plantDocuments = [];
-  // Set<Product> products = favoriteList;
-  // final hotels = favoriteList.toList();
+
+  List<PlantData> plantDataList = [];
 
   void initState() {
     super.initState();
     fetchPlantData(); // Fetch the plant data when the widget initializes
   }
 
-  // void fetchPlantData() async {
+  Future<void> fetchPlantData() async {
+    try {
+      QuerySnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore
+          .instance.collection('storedPlant').get();
+
+      List<DocumentSnapshot> newDocuments = snapshot.docs.where((doc) {
+        return !plantDocuments.any((existingDoc) => existingDoc.id == doc.id);
+      }).toList();
+
+      if (newDocuments.isNotEmpty) {
+        setState(() {
+          plantDocuments.addAll(newDocuments);
+        }
+        );
+      }
+
+      setState(() {
+        plantDocuments = snapshot.docs;
+      });
+
+
+
+        // reference.once().then((DataSnapshot snapshot) {
+        //   dynamic value = snapshot.value;
+        //   if (value != null) {
+        //     String temp = value['Temperature']?.toString() ?? '';
+        //     String humid = value['Soil Moisture']?.toString() ?? '';
+        //
+        //     setState(() {
+        //       // Update the data in the Firestore collection
+        //       FirebaseFirestore.instance.collection('storedPlant').doc(documentId).update({
+        //         'temperature': temp,
+        //         'soilHumidity': humid,
+        //       }).then((_) {
+        //         print('Plant data updated successfully for document $documentId');
+        //       }).catchError((error) {
+        //         print('Error updating plant data for document $documentId: $error');
+        //       });
+        //     });
+        //   }
+        // }).catchError((error) {
+        //   print('Error fetching plant data for document $documentId: $error');
+        // });
+
+    } catch (e) {
+      print('Error fetching plant data: $e');
+    }
+  }
+
+
+  // void fetchPlantData(String code) async {
   //   try {
   //     QuerySnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore.instance
   //         .collection('storedPlant')
@@ -57,109 +125,45 @@ class NewHomePageState extends State<NewHomePage> {
   //     List<String> documentIds = snapshot.docs.map((doc) => doc.id).toList();
   //     print('All document IDs: $documentIds');
   //
-  //     for (DocumentSnapshot plantDocument in plantDocuments) {
-  //       String documentId = plantDocument.id;
-  //       String plantName = plantDocument.get('name') as String? ?? '';
-  //       String waterCycle = plantDocument.get('waterCycle') as String? ?? '';
-  //       String photoDownloadURL =
-  //           'https://firebasestorage.googleapis.com/v0/b/realwaterme.appspot.com/o/profile_photos%2F${plantDocument.id}.jpg?alt=media';
+  //     // DocumentSnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore.instance
+  //     //         .collection('storedPlant')
+  //     //         .doc(widget.documentId)
+  //     //         .get();
   //
-  //       // Access the temperature and soil humidity data based on documentId
-  //       DatabaseReference reference =
-  //       FirebaseDatabase.instance.reference().child(documentId);
+  //     // Access the 'ttest' node in Realtime Database
+  //     DatabaseReference reference =
+  //     FirebaseDatabase.instance.reference().child('test1');
   //
-  //       // Listen for a single value event
-  //       reference.once().then((DatabaseEvent event) {
-  //         DataSnapshot snapshot = event.snapshot;
-  //         dynamic value = snapshot.value;
-  //         if (value != null) {
-  //           // Get the 'Temperature' and 'Soil Moisture' values from Realtime Database
-  //           String temperature = value['Temperature']?.toString() ?? '';
-  //           String soilHumidity = value['Soil Moisture']?.toString() ?? '';
-  //
-  //           // Update the data in the Firestore collection
-  //           FirebaseFirestore.instance.collection('storedPlant').doc(documentId).update({
-  //             'temperature': temperature,
-  //             'soilHumidity': soilHumidity,
-  //           }).then((_) {
-  //             print('Plant data updated successfully for document $documentId');
-  //           }).catchError((error) {
-  //             print('Error updating plant data for document $documentId: $error');
-  //           });
-  //         }
-  //       }).catchError((error) {
-  //         print('Error fetching plant data for document $documentId: $error');
-  //       });
+  //     if (snapshot.docs.isNotEmpty) {
+  //       var firstDocument = snapshot.docs.first;
+  //       plantName = firstDocument.get('name') as String? ?? '';
+  //       waterCycle = firstDocument.get('waterCycle') as String? ?? '';
   //     }
+  //
+  //     // Listen for a single value event
+  //     reference.once().then((DatabaseEvent event) {
+  //       DataSnapshot snapshot = event.snapshot;
+  //       dynamic value = snapshot.value;
+  //       if (value != null) {
+  //         // Get the 'Temperature' and 'Soil Moisture' values from Realtime Database
+  //         temperature = value['Temperature']?.toString() ?? '';
+  //         soilHumidity = value['Soil Moisture']?.toString() ?? '';
+  //         setState(() {});
+  //       }
+  //     }).catchError((error) {
+  //       print('Error fetching plant data: $error');
+  //     });
+  //
   //   } catch (e) {
   //     print('Error fetching plant data: $e');
   //   }
   // }
-
-  void fetchPlantData() async {
-    try {
-      QuerySnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore.instance
-          .collection('storedPlant')
-          .get();
-
-      List<DocumentSnapshot> newDocuments = snapshot.docs.where((doc) {
-        // Filter out the documents that already exist in plantDocuments list
-        return !plantDocuments.any((existingDoc) => existingDoc.id == doc.id);
-      }).toList();
-
-      if (newDocuments.isNotEmpty) {
-        setState(() {
-          plantDocuments.addAll(newDocuments);
-        });
-      }
-
-      setState(() {
-        plantDocuments = snapshot.docs;
-      });
-
-      List<String> documentIds = snapshot.docs.map((doc) => doc.id).toList();
-      print('All document IDs: $documentIds');
-
-      // DocumentSnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore.instance
-      //         .collection('storedPlant')
-      //         .doc(widget.documentId)
-      //         .get();
-
-      // Access the 'ttest' node in Realtime Database
-      DatabaseReference reference =
-      FirebaseDatabase.instance.reference().child('test1');
-
-      if (snapshot.docs.isNotEmpty) {
-        var firstDocument = snapshot.docs.first;
-        plantName = firstDocument.get('name') as String? ?? '';
-        waterCycle = firstDocument.get('waterCycle') as String? ?? '';
-      }
-
-      // Listen for a single value event
-      reference.once().then((DatabaseEvent event) {
-        DataSnapshot snapshot = event.snapshot;
-        dynamic value = snapshot.value;
-        if (value != null) {
-          // Get the 'Temperature' and 'Soil Moisture' values from Realtime Database
-          temperature = value['Temperature']?.toString() ?? '';
-          soilHumidity = value['Soil Moisture']?.toString() ?? '';
-          setState(() {});
-        }
-      }).catchError((error) {
-        print('Error fetching plant data: $error');
-      });
-
-    } catch (e) {
-      print('Error fetching plant data: $e');
-    }
-  }
 
 
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      //appBar: AppBar(title: Text("water")),
       body: Column(
         children: [
           Expanded(
@@ -172,10 +176,7 @@ class NewHomePageState extends State<NewHomePage> {
                   DocumentSnapshot plantDocument = plantDocuments[index];
                   String plantName = plantDocument.get('name') as String? ?? '';
                   String waterCycle = plantDocument.get('waterCycle') as String? ?? '';
-                  String photoDownloadURL =
-                      'https://firebasestorage.googleapis.com/v0/b/realwaterme.appspot.com/o/profile_photos%2F${plantDocument.id}.jpg?alt=media';
-
-
+                  String imageURL = plantDocument.get('image') as String? ?? '';
 
                   return Column(
                     children: [
@@ -230,13 +231,14 @@ class NewHomePageState extends State<NewHomePage> {
                                   padding: const EdgeInsets.all(8.0),
                                   child: ClipOval(
                                     child: Image.network(
-                                      photoDownloadURL,
+                                      imageURL,
+                                      //photoDownloadURL.toString(),
                                       width: 80,
                                       height: 80,
                                       errorBuilder: (context, error, stackTrace) {
                                         // Handle the case when the photo fails to load
                                         return Image.asset(
-                                          'assets/pot.png',
+                                          'assets/pot.jpg',
                                           width: 80,
                                           height: 80,
                                         );
@@ -333,4 +335,12 @@ class NewHomePageState extends State<NewHomePage> {
       ),      
     );
   }
+
+  // Future<String> downloadURL(String imageName) async{
+  //   String downloadURL = await FirebaseStorage.instance
+  //       .ref('images/$imageName.jpg').getDownloadURL();
+  //   //String downloadURL = await storage.ref('images/$imageName').getDownloadURL();
+  //
+  //   downloadURL;
+  // }
 }

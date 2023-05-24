@@ -5,7 +5,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'home.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'dart:io';
+import 'package:http/http.dart' as http;
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 
 class Enroll extends StatefulWidget {
   @override
@@ -19,59 +20,126 @@ class _EnrollState extends State<Enroll> {
   File? selectedFile;
   XFile? _imageFile;
   final ImagePicker _picker = ImagePicker();
+  String imageURL='';
 
   final TextEditingController nameController = TextEditingController();
   final TextEditingController waterCycleController = TextEditingController();
+  final TextEditingController codeController = TextEditingController();
+
 
   String name = '';
   String waterCycle = '';
+  static int code = 0;
 
   @override
   void initState() {
     super.initState();
     nameController.addListener(updateName);
     waterCycleController.addListener(updateWaterCycle);
+    //codeController.addListener(updateCode);
   }
 
-  Future<void> uploadPhotoToFirebase(File file) async {
-    if (file == null) return; // Return if no file is selected
-
+  // Future<String> getLatestImageFileName() async {
+  //   try {
+  //     final listResult = await firebase_storage.FirebaseStorage.instance.ref('images/').listAll();
+  //     final files = listResult.items;
+  //     final latestFile = files.last;
+  //     final fileMetadata = await latestFile.getMetadata();
+  //     final fileName = fileMetadata.name;
+  //
+  //     final latestId = int.parse(fileName.split('.')[0]); // 파일 이름에서 숫자 부분 추출
+  //     final newId = latestId + 1;
+  //
+  //     return '$newId';
+  //   } catch (e) {
+  //     print('가장 최근 이미지 파일 이름 가져오기 실패: $e');
+  //     return '1'; // 기존 이미지가 없을 경우 기본 파일 이름으로 1 반환
+  //   }
+  // }
+  Future<String> getLatestImageFileName() async {
     try {
-      // Create a reference to the file in Firebase Storage
-      final FirebaseStorage storage = FirebaseStorage.instance;
-      final Reference storageRef = storage.ref().child('profile_photos').child('${_user?.uid}.jpg');
+      final listResult = await firebase_storage.FirebaseStorage.instance.ref('images/').listAll();
+      final files = listResult.items;
 
-      // Upload the file to Firebase Storage
-      await storageRef.putFile(file);
+      int latestId = -1;
+      for (final file in files) {
+        final fileName = file.name;
+        final fileId = int.tryParse(fileName.split('.')[0]);
+        if (fileId != null && fileId > latestId) {
+          latestId = fileId;
+        }
+      }
 
-      // Get the download URL of the uploaded file
-      final String downloadURL = await storageRef.getDownloadURL();
+      final newId = latestId + 1;
 
-      // Do something with the downloadURL, such as storing it in the user's profile
-
-      print('Photo uploaded successfully');
+      return '$newId';
     } catch (e) {
-      print('Error uploading photo: $e');
-      // Handle the error
+      print('가장 최근 이미지 파일 이름 가져오기 실패: $e');
+      return '1'; // 기존 이미지가 없을 경우 기본 파일 이름으로 1 반환
+    }
+  }
+
+  Future<void> uploadImageToFirebase() async {
+    if (_imageFile != null) {
+      try {
+        // 이미지 업로드
+
+        // final fileName = '0.jpg';
+        // final destination = 'images/$fileName';
+        final fileName = await getLatestImageFileName(); // 가장 최근 이미지 파일 이름 가져오기
+        final destination = 'images/$fileName.jpg';
+
+        await firebase_storage.FirebaseStorage.instance
+            .ref(destination)
+            .putFile(File(_imageFile!.path));
+
+        imageURL = await firebase_storage.FirebaseStorage.instance
+            .ref(destination).getDownloadURL();
+        print(imageURL);
+
+      } catch (e) {
+        // 업로드 실패
+        print('이미지 업로드 실패: $e');
+      }
+    } else {
+      try {
+        // 기본 이미지 업로드
+        final defaultImagePath = 'assets/pot.jpg';
+        final bytes = await File(defaultImagePath).readAsBytes();
+
+        final latestId = await getLatestImageFileName(); // 가장 최근 이미지 파일 이름 가져오기
+        final newId = int.parse(latestId) + 1;
+        final fileName = '$newId.jpg';
+        final destination = 'images/$fileName';
+
+        await firebase_storage.FirebaseStorage.instance
+            .ref(destination)
+            .putData(bytes);
+      } catch (e) {
+        // 업로드 실패
+        print('이미지 업로드 실패: $e');
+      }
     }
   }
 
   Future<void> captureImage() async {
-    // Code to capture a photo using the camera
-    // Set the selectedFile to the captured image file
-    // ...
-
-    // Call the method to upload the photo to Firebase Storage
-    await uploadPhotoToFirebase(selectedFile!);
+    final XFile? pickedFile = await _picker.pickImage(source: ImageSource.camera);
+    if (pickedFile != null) {
+      setState(() {
+        _imageFile = pickedFile;
+        selectedFile = File(pickedFile.path);
+      });
+    }
   }
 
   Future<void> pickImageFromAlbum() async {
-    // Code to select an image from the album
-    // Set the selectedFile to the selected image file
-    // ...
-
-    // Call the method to upload the photo to Firebase Storage
-    await uploadPhotoToFirebase(selectedFile!);
+    final XFile? pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      setState(() {
+        _imageFile = pickedFile;
+        selectedFile = File(pickedFile.path);
+      });
+    }
   }
 
 
@@ -89,7 +157,7 @@ class _EnrollState extends State<Enroll> {
   }
 
   //firebase
-  void saveDataToFirestore(String name, String waterCycle) {
+  void saveDataToFirestore(String name, String waterCycle, int code, String imageURL) {
     CollectionReference storedPlantCollection =
     FirebaseFirestore.instance.collection('storedPlant');
 
@@ -97,6 +165,8 @@ class _EnrollState extends State<Enroll> {
         .add({
       'name': name,
       'waterCycle': waterCycle,
+      'code': code,
+      'image': imageURL
     })
         .then((DocumentReference document) {
       print('Data saved to Firestore with ID: ${document.id}');
@@ -115,7 +185,10 @@ class _EnrollState extends State<Enroll> {
         .catchError((error) => print('Failed to save data: $error'));
   }
 
-
+  Future<void> saveDataAndUploadImage() async {
+    await uploadImageToFirebase(); // Wait for image upload to complete
+    saveDataToFirestore(name, waterCycle, code, imageURL); // Save data to Firestore
+  }
 
 
   Widget imageProfile(BuildContext context) {
@@ -128,7 +201,7 @@ class _EnrollState extends State<Enroll> {
             child: CircleAvatar(
               radius: 80,
               backgroundImage: _imageFile == null
-                  ? AssetImage('assets/pot.png')
+                  ? AssetImage('assets/pot.jpg')
                   : _imageFile!.path != null
                   ? FileImage(File(_imageFile!.path)) as ImageProvider<Object>?
                   : null,
@@ -215,7 +288,7 @@ class _EnrollState extends State<Enroll> {
       child: Column(
         children: <Widget>[
           Text(
-            'Choose Profile photo',
+            'Choose plant photo',
             style: TextStyle
               (fontSize: 29),
           ),
@@ -226,14 +299,16 @@ class _EnrollState extends State<Enroll> {
               ElevatedButton.icon(
                 icon: Icon(Icons.camera, size: 40),
                 onPressed: () {
-                  takePhoto(ImageSource.camera);
+                  captureImage();
+                  Navigator.pop(context);
                 },
                 label: Text('Camera', style: TextStyle(fontSize: 20)),
               ),
               ElevatedButton.icon(
                 icon: Icon(Icons.photo_library, size: 40),
                 onPressed: () {
-                  takePhoto(ImageSource.gallery);
+                  pickImageFromAlbum();
+                  Navigator.pop(context);
                 },
                 label: Text('Gallery', style: TextStyle(fontSize: 20)),
               ),
@@ -244,12 +319,7 @@ class _EnrollState extends State<Enroll> {
     );
   }
 
-  takePhoto(ImageSource source) async {
-    final pickedFile = await _picker.pickImage(source: source);
-    setState(() {
-      _imageFile = pickedFile;
-    });
-  }
+
 
 
 
@@ -274,16 +344,17 @@ class _EnrollState extends State<Enroll> {
             SizedBox(height: 80),
             ElevatedButton(
               child: Text("Enroll"),
-              onPressed: () async{
-                saveDataToFirestore(name, waterCycle);
-                await uploadPhotoToFirebase(selectedFile!);
-                // Navigator.pop(context);
-
-                Navigator.push(
-                  context,
-                  //MaterialPageRoute(builder: (context) => NewHomePage(documentId: '',)),
-                  MaterialPageRoute(builder: (context) => HomePage()),
-                );
+              onPressed: () {
+                saveDataAndUploadImage().then((_) {
+                  code++;
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => HomePage()),
+                  );
+                }).catchError((error) {
+                  // Handle any errors that occur during image upload or data saving
+                  print('Error: $error');
+                });
               },
             ),
           ],

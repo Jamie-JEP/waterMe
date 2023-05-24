@@ -1,12 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'signin_widget.dart';
-import 'model/product.dart';
-import 'model/products_repository.dart';
-import 'alarm.dart';
-import 'homepage.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:getwidget/getwidget.dart';
 
@@ -15,12 +8,15 @@ class PlantData {
   String name;
   String waterCycle;
   bool isChecked;
+  String photoUrl;
+
 
   PlantData({
     required this.id,
     required this.name,
     required this.waterCycle,
     this.isChecked = false,
+    required this.photoUrl,
   });
 }
 
@@ -78,6 +74,7 @@ class CalendarPageState extends State<CalendarPage> {
           id: doc.id,
           name: doc.get('name') as String? ?? '',
           waterCycle: doc.get('waterCycle') as String? ?? '',
+          photoUrl: doc.get('image') as String? ?? '',
         );
       }).toList();
 
@@ -171,7 +168,7 @@ class CalendarPageState extends State<CalendarPage> {
                     subTitleText: 'watering day!',
                     color: Colors.white,
                     avatar: GFAvatar(
-                      backgroundImage: AssetImage('assets/pot.png'),
+                      backgroundImage: NetworkImage(plantData.photoUrl),
                     ),
                     size: 26,
                     activeBgColor: Colors.green,
