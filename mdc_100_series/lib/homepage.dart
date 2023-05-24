@@ -6,9 +6,9 @@ import 'package:firebase_database/firebase_database.dart';
 import 'enroll.dart';
 import 'home.dart';
 
-
-class NewHomePage extends StatefulWidget{
+class NewHomePage extends StatefulWidget {
   final String documentId;
+
   const NewHomePage({Key? key, required this.documentId}) : super(key: key);
 
   @override
@@ -19,8 +19,8 @@ class PlantData {
   final String code;
   final String plantName;
   final String waterCycle;
-  final int humid;
-  final int temp;
+  final double humid;
+  final double temp;
   final String photoUrl;
 
   PlantData({
@@ -33,13 +33,14 @@ class PlantData {
   });
 }
 
-
 class NewHomePageState extends State<NewHomePage> {
   late String plantName = '';
   late String waterCycle = '';
-  late String temperature ='';
-  late String soilHumidity = '';
-  late String code = '';
+  late String temperature1 = '';
+  late String soilHumidity1 = '';
+  late String temperature2 = '';
+  late String soilHumidity2 = '';
+  late int code = 100;
 
   List<Card> cards = [];
   List<DocumentSnapshot> plantDocuments = [];
@@ -53,8 +54,8 @@ class NewHomePageState extends State<NewHomePage> {
 
   Future<void> fetchPlantData() async {
     try {
-      QuerySnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore
-          .instance.collection('storedPlant').get();
+      QuerySnapshot<Map<String, dynamic>> snapshot =
+          await FirebaseFirestore.instance.collection('storedPlant').get();
 
       List<DocumentSnapshot> newDocuments = snapshot.docs.where((doc) {
         return !plantDocuments.any((existingDoc) => existingDoc.id == doc.id);
@@ -63,8 +64,7 @@ class NewHomePageState extends State<NewHomePage> {
       if (newDocuments.isNotEmpty) {
         setState(() {
           plantDocuments.addAll(newDocuments);
-        }
-        );
+        });
       }
 
       setState(() {
@@ -72,94 +72,35 @@ class NewHomePageState extends State<NewHomePage> {
       });
 
 
+      DatabaseReference reference = FirebaseDatabase.instance.reference().child('test1');
+      reference.once().then((DatabaseEvent event) {
+        DataSnapshot snapshot = event.snapshot;
+        dynamic value = snapshot.value;
+        if (value != null) {
+          temperature1 = value['Temperature']?.toString() ?? '';
+          soilHumidity1 = value['Soil Moisture']?.toString() ?? '';
+          setState(() {});
+        }
+      }).catchError((error) {
+        print('Error fetching plant data: $error');
+      });
 
-        // reference.once().then((DataSnapshot snapshot) {
-        //   dynamic value = snapshot.value;
-        //   if (value != null) {
-        //     String temp = value['Temperature']?.toString() ?? '';
-        //     String humid = value['Soil Moisture']?.toString() ?? '';
-        //
-        //     setState(() {
-        //       // Update the data in the Firestore collection
-        //       FirebaseFirestore.instance.collection('storedPlant').doc(documentId).update({
-        //         'temperature': temp,
-        //         'soilHumidity': humid,
-        //       }).then((_) {
-        //         print('Plant data updated successfully for document $documentId');
-        //       }).catchError((error) {
-        //         print('Error updating plant data for document $documentId: $error');
-        //       });
-        //     });
-        //   }
-        // }).catchError((error) {
-        //   print('Error fetching plant data for document $documentId: $error');
-        // });
-
+      DatabaseReference reference2 = FirebaseDatabase.instance.reference().child('test2');
+      reference2.once().then((DatabaseEvent event) {
+        DataSnapshot snapshot = event.snapshot;
+        dynamic value = snapshot.value;
+        if (value != null) {
+          temperature2 = value['Temperature']?.toString() ?? '';
+          soilHumidity2 = value['Soil Moisture']?.toString() ?? '';
+          setState(() {});
+        }
+      }).catchError((error) {
+        print('Error fetching plant data: $error');
+      });
     } catch (e) {
       print('Error fetching plant data: $e');
     }
   }
-
-
-  // void fetchPlantData(String code) async {
-  //   try {
-  //     QuerySnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore.instance
-  //         .collection('storedPlant')
-  //         .get();
-  //
-  //     List<DocumentSnapshot> newDocuments = snapshot.docs.where((doc) {
-  //       // Filter out the documents that already exist in plantDocuments list
-  //       return !plantDocuments.any((existingDoc) => existingDoc.id == doc.id);
-  //     }).toList();
-  //
-  //     if (newDocuments.isNotEmpty) {
-  //       setState(() {
-  //         plantDocuments.addAll(newDocuments);
-  //       });
-  //     }
-  //
-  //     setState(() {
-  //       plantDocuments = snapshot.docs;
-  //     });
-  //
-  //     List<String> documentIds = snapshot.docs.map((doc) => doc.id).toList();
-  //     print('All document IDs: $documentIds');
-  //
-  //     // DocumentSnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore.instance
-  //     //         .collection('storedPlant')
-  //     //         .doc(widget.documentId)
-  //     //         .get();
-  //
-  //     // Access the 'ttest' node in Realtime Database
-  //     DatabaseReference reference =
-  //     FirebaseDatabase.instance.reference().child('test1');
-  //
-  //     if (snapshot.docs.isNotEmpty) {
-  //       var firstDocument = snapshot.docs.first;
-  //       plantName = firstDocument.get('name') as String? ?? '';
-  //       waterCycle = firstDocument.get('waterCycle') as String? ?? '';
-  //     }
-  //
-  //     // Listen for a single value event
-  //     reference.once().then((DatabaseEvent event) {
-  //       DataSnapshot snapshot = event.snapshot;
-  //       dynamic value = snapshot.value;
-  //       if (value != null) {
-  //         // Get the 'Temperature' and 'Soil Moisture' values from Realtime Database
-  //         temperature = value['Temperature']?.toString() ?? '';
-  //         soilHumidity = value['Soil Moisture']?.toString() ?? '';
-  //         setState(() {});
-  //       }
-  //     }).catchError((error) {
-  //       print('Error fetching plant data: $error');
-  //     });
-  //
-  //   } catch (e) {
-  //     print('Error fetching plant data: $e');
-  //   }
-  // }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -175,13 +116,16 @@ class NewHomePageState extends State<NewHomePage> {
                 itemBuilder: (context, index) {
                   DocumentSnapshot plantDocument = plantDocuments[index];
                   String plantName = plantDocument.get('name') as String? ?? '';
-                  String waterCycle = plantDocument.get('waterCycle') as String? ?? '';
+                  String waterCycle =
+                      plantDocument.get('waterCycle') as String? ?? '';
                   String imageURL = plantDocument.get('image') as String? ?? '';
+                  int code = plantDocument.get('code') as int? ?? 0;
 
                   return Column(
                     children: [
                       Padding(
-                        padding: const EdgeInsets.only(left: 15, right: 15, bottom: 1),
+                        padding: const EdgeInsets.only(
+                            left: 15, right: 15, bottom: 1),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
@@ -201,7 +145,8 @@ class NewHomePageState extends State<NewHomePage> {
                               ),
                               decoration: BoxDecoration(
                                 color: Colors.green,
-                                borderRadius: BorderRadius.all(Radius.circular(12.0)),
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(12.0)),
                               ),
                               width: 100.0,
                               height: 35.0,
@@ -210,7 +155,8 @@ class NewHomePageState extends State<NewHomePage> {
                         ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.only(left: 15, right: 15, bottom: 15),
+                        padding: const EdgeInsets.only(
+                            left: 15, right: 15, bottom: 15),
                         child: Card(
                           elevation: 5,
                           clipBehavior: Clip.antiAliasWithSaveLayer,
@@ -235,7 +181,8 @@ class NewHomePageState extends State<NewHomePage> {
                                       //photoDownloadURL.toString(),
                                       width: 80,
                                       height: 80,
-                                      errorBuilder: (context, error, stackTrace) {
+                                      errorBuilder:
+                                          (context, error, stackTrace) {
                                         // Handle the case when the photo fails to load
                                         return Image.asset(
                                           'assets/pot.jpg',
@@ -254,6 +201,7 @@ class NewHomePageState extends State<NewHomePage> {
                                     SizedBox(height: 10),
                                     Row(
                                       children: [
+                                        Text(code.toString()),
                                         Text(
                                           'Temperature: ',
                                           style: TextStyle(
@@ -263,7 +211,7 @@ class NewHomePageState extends State<NewHomePage> {
                                         Text(
                                           //온도값
                                           //'25°C',
-                                          temperature,
+                                          code % 2 == 0 ? temperature1 : temperature2,
                                           style: TextStyle(
                                             fontSize: 16,
                                           ),
@@ -298,7 +246,7 @@ class NewHomePageState extends State<NewHomePage> {
                                           ),
                                         ),
                                         Text(
-                                          (double.tryParse(soilHumidity)?.toStringAsFixed(2) ?? 'Invalid humidity') + '%',
+                                          (code % 2 == 0 ? double.tryParse(soilHumidity1)?.toStringAsFixed(2) : double.tryParse(soilHumidity2)?.toStringAsFixed(2)) ?? 'Invalid humidity',
                                           style: TextStyle(
                                             fontSize: 16,
                                           ),
@@ -331,16 +279,7 @@ class NewHomePageState extends State<NewHomePage> {
           ),
           SizedBox(height: 15),
         ],
-              
-      ),      
+      ),
     );
   }
-
-  // Future<String> downloadURL(String imageName) async{
-  //   String downloadURL = await FirebaseStorage.instance
-  //       .ref('images/$imageName.jpg').getDownloadURL();
-  //   //String downloadURL = await storage.ref('images/$imageName').getDownloadURL();
-  //
-  //   downloadURL;
-  // }
 }
