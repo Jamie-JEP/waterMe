@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "745171668230",
+    "firebase_url": "https://realwaterme-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "realwaterme",
+    "storage_bucket": "realwaterme.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:745171668230:android:8f3566ee255bf8c03d6287",
+        "android_client_info": {
+          "package_name": "com.example.shrine"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "745171668230-vh2jqbp3k9qp165ucrcl5qvl9r6jaki7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCHNq2oEpBC2OzJK4e6UqAERMCblWg0YMs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "745171668230-vh2jqbp3k9qp165ucrcl5qvl9r6jaki7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
