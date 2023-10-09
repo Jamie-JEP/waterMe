@@ -1,5 +1,6 @@
 # WaterMe
 2023-1 Human Computer Interaction Team Project
+## 유의사항 - mdc100 파일만 사용하면 됌. 
 
 Team number: 6
 
